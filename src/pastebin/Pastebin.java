@@ -159,6 +159,8 @@ public class Pastebin {
             }
                                                                                                                                 //END PASTE CLEANING
 
+            
+            //BEGIN SYNTAX DETECTION
             int g = 0;
             int numFiles = 0;
             for (String u : urls) {
@@ -207,7 +209,9 @@ public class Pastebin {
                     heuristics = "";
                 }
 
-
+                //END SYNTAX DETECTION
+                
+                
 
                 URL v = new URL(u);
                 //File file = new File("L:\\" + pasteType.get(g) + "\\pastebin" + " - " + pasteName.get(g) + ".txt");
@@ -221,14 +225,7 @@ public class Pastebin {
                         file = new File("L:" + File.separator + "pastes" + File.separator + "Pastebin" + " - " + pasteName.get(g) + " - " + linksPartial.get(g) + ".txt");
                     }
 
-
                     heuristics = "";
-                    //File file = new File("L:" + File.separator + "pastes" + File.separator + "Pastebin" + " - " + pasteName.get(g) + " - " + linksPartial.get(g) + ".txt");
-
-                    //This is a failed attempt at folder minimization
-                    //File file = new File("L:" + File.separator + "pastes" + File.separator + "From " + Math.floor((numFiles/1000)) + "k" + File.separator + "Pastebin" + " - " + pasteName.get(g) + " - " + linksPartial.get(g) + ".txt");
-
-
                     if (!(file.exists())) {
                         file.getParentFile().mkdirs();
                         file.createNewFile();
