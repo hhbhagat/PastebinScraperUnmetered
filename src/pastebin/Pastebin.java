@@ -18,12 +18,14 @@ import org.apache.commons.io.FileUtils;
  * 1. Comment code
  * 2. Refactor out to methods
  * 3. Implement object to contain paste URLs
+ * 4. Integrate raw-paste cleaning into Paste classes
  * 4. Differentiate between expiring pastes and forever pastes and separate accordingly 
  * 5. Implement scanning queue
  * 6. Implement timer to prevent site lockout
  * 
  * PROSPECTIVE CHANGES TO MAIN: 
- *      -Make ArrayList of 
+ *      -Make ArrayList of VolatilePaste and InvolatilePaste
+ *      -
  * 
  * -----------------TODO Classes--------------------------------------
  *  1.  -VolatilePaste class
@@ -35,16 +37,18 @@ import org.apache.commons.io.FileUtils;
  *              -Integer: Expiry time
  *              -Long: Expiry time in terms of epoch
  *          -methods
- *              -String - getURL (raw paste URL)
- *              -String - getType (paste type)
- *              -String - getTitle (paste Title)
- *              -void - setURL (raw paste URL)
- *              -void - setType (paste type)
- *              -void - setTitle (paste Title)
- *              -Integer - getExpiry
- *              -Long - getExpiry_Epoch (Get the expiry in terms of the epoch)
- *              -void - setExpiry
- *              -void - setExpiry_Epoch (Get the expiry in terms of the epoch)
+ *              -Getters
+ *                  -String - getURL (raw paste URL)
+ *                  -String - getType (paste type)
+ *                  -String - getTitle (paste Title)
+ *                  -Integer - getExpiry
+ *                  -Long - getExpiry_Epoch (Get the expiry in terms of the epoch)
+ *              -Setters
+ *                  -void - setURL (raw paste URL)
+ *                  -void - setType (paste type)
+ *                  -void - setTitle (paste Title)
+ *                  -void - setExpiry
+ *                  -void - setExpiry_Epoch (Get the expiry in terms of the epoch)
  *  2.  -InvolatilePaste class
  *          -properties
  *              -String: Paste URL
@@ -52,12 +56,14 @@ import org.apache.commons.io.FileUtils;
  *              -String: Paste Type
  *              -String: Raw paste url
  *          -methods
- *              -String - getURL (raw paste URL)
- *              -String - getType (paste type)
- *              -String - getTitle (paste Title)
- *              -String - setURL (raw paste URL)
- *              -String - setType (paste type)
- *              -String - setTitle (paste Title)
+ *              -Getters
+ *                  -String - getURL (raw paste URL)
+ *                  -String - getType (paste type)
+ *                  -String - getTitle (paste Title)
+ *              -Setters
+ *                  -String - setURL (raw paste URL)
+ *                  -String - setType (paste type)
+ *                  -String - setTitle (paste Title)
  * --------------------------------------------------------------------
  */
 
@@ -111,6 +117,8 @@ public class Pastebin {
                 System.out.println("Sorry, the site had blocked you");
             }
 
+                                                                                                                           //START PASTE CLEANING
+            
             linkLineSort(rawHREF); //separates Paste ID(raw href tags) from Paste Names
 
             for (String e : linksPartial) {
@@ -135,8 +143,8 @@ public class Pastebin {
                 isolateType(y);
             }
 
-            //Fix each Name
-            for (int w = 0; w < pasteName.size(); w++) {
+            //Fix each Name to make sure it does not contain invalid characters.
+            for (int w = 0; w < pasteName.size(); w++) { 
                 String temp;
                 temp = pasteName.get(w);
                 temp = temp.replace("\\", "_");
@@ -149,10 +157,7 @@ public class Pastebin {
                 temp = temp.replace("|", "_pipe_");
                 pasteName.set(w, temp);
             }
-
-
-
-
+                                                                                                                                //END PASTE CLEANING
 
             int g = 0;
             int numFiles = 0;
