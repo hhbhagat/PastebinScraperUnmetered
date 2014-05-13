@@ -14,6 +14,53 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.apache.commons.io.FileUtils;
 
+/*TODO:
+ * 1. Comment code
+ * 2. Refactor out to methods
+ * 3. Implement object to contain paste URLs
+ * 4. Differentiate between expiring pastes and forever pastes and separate accordingly 
+ * 5. Implement scanning queue
+ * 6. Implement timer to prevent site lockout
+ * 
+ * PROSPECTIVE CHANGES TO MAIN: 
+ *      -Make ArrayList of 
+ * 
+ * -----------------TODO Classes--------------------------------------
+ *  1.  -VolatilePaste class
+ *          -properties:
+ *              -String: Paste URL
+ *              -String: Paste Title
+ *              -String: Paste Type
+ *              -String: Raw paste url
+ *              -Integer: Expiry time
+ *              -Long: Expiry time in terms of epoch
+ *          -methods
+ *              -String - getURL (raw paste URL)
+ *              -String - getType (paste type)
+ *              -String - getTitle (paste Title)
+ *              -void - setURL (raw paste URL)
+ *              -void - setType (paste type)
+ *              -void - setTitle (paste Title)
+ *              -Integer - getExpiry
+ *              -Long - getExpiry_Epoch (Get the expiry in terms of the epoch)
+ *              -void - setExpiry
+ *              -void - setExpiry_Epoch (Get the expiry in terms of the epoch)
+ *  2.  -InvolatilePaste class
+ *          -properties
+ *              -String: Paste URL
+ *              -String: Paste Title
+ *              -String: Paste Type
+ *              -String: Raw paste url
+ *          -methods
+ *              -String - getURL (raw paste URL)
+ *              -String - getType (paste type)
+ *              -String - getTitle (paste Title)
+ *              -String - setURL (raw paste URL)
+ *              -String - setType (paste type)
+ *              -String - setTitle (paste Title)
+ * --------------------------------------------------------------------
+ */
+
 public class Pastebin {
 
     public static Document doc;
@@ -30,6 +77,8 @@ public class Pastebin {
     public static ArrayList<String> pasteType = new ArrayList<String>();
     public static ArrayList<String> pasteNamesOrig = new ArrayList<String>();
     public static int ptime;
+    private static int INDEX_START = 10;
+    private static int INDEX_STOP = 18;
 
 //pastebin archive has 250 recent paste capacity
     public static void main(String[] args) throws Exception {
@@ -41,51 +90,41 @@ public class Pastebin {
 
         ptime = ptime * 60000;
 
+        ArrayList<String> pastes = new ArrayList<String>(); //main list of pastes
 
         
-        
-        ArrayList<String> pastes = new ArrayList<String>();
-
-
-
+        //Main program logic
         while (true) {
 
             scanThis("http://pastebin.com/archive/");
 
             try {
-                list = doc.select(".maintable");
+                list = doc.select(".maintable"); //gets element of list of pastes
 
 
-                Elements filteredList = list.select("[href]");
+                Elements filteredList = list.select("[href]"); //Gets the hrefs of pastes from the list
                 //System.out.println(filteredList);
-                for (Element hrefs : filteredList) {
+                for (Element hrefs : filteredList) { //adds them all to RawHREF
                     rawHREF.add(hrefs.toString());
                 }
             } catch (Exception e) {
                 System.out.println("Sorry, the site had blocked you");
             }
 
-            linkLineSort(rawHREF);
+            linkLineSort(rawHREF); //separates Paste ID(raw href tags) from Paste Names
 
-            for (String k : linksPartial) {
-                //System.out.println(k);
-            }
             for (String e : linksPartial) {
                 linksPartial2.add(e);
             }
 
-            isolateText(10, 18);    
+            isolateText(INDEX_START, INDEX_STOP);  //splits out the IDs from the raw href tags in linksPartial
 
 
-            for (String k : linksPartial) {
+            for (String k : linksPartial) {  //makes the final urls
                 urls.add("http://pastebin.com/raw.php?i=" + k);
             }
 
-
-            System.out.println("hey");
-            //System.out.println(linksPartial2.get(4));
-
-            pasteNamesOrig = (ArrayList<String>) pasteNames.clone();
+            pasteNamesOrig = (ArrayList<String>) pasteNames.clone(); //pasteNamesOrig is an arraylist that stores all the pasteNames
 
             //isolate the Titles of the Pastes
             for (int y = 0; y < pasteNames.size(); y++) {
