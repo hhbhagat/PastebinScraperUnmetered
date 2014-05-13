@@ -139,6 +139,7 @@ public class Pastebin {
                 isolateName(20, y);
             }
 
+            //Isolate types of paste
             for (int y = 0; y < pasteNamesOrig.size(); y++) {
                 isolateType(y);
             }
@@ -226,7 +227,7 @@ public class Pastebin {
                     }
 
                     heuristics = "";
-                    if (!(file.exists())) {
+                    if (!(file.exists())) { //check for overlapping files
                         file.getParentFile().mkdirs();
                         file.createNewFile();
                         FileUtils.copyURLToFile(v, file);
@@ -238,6 +239,8 @@ public class Pastebin {
                 }
             }
 
+            
+            //Clear after the pass.
             rawHREF.clear();
             pasteNames.clear();
             linksPartial.clear();
@@ -277,8 +280,6 @@ public class Pastebin {
     }
 
     public static void writeToFile(String input) throws Exception {
-
-
         BufferedWriter out = new BufferedWriter(new FileWriter("L:\\a.txt"));
         out.write(input + "\n");
         out.close();
